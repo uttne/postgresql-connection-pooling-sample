@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:13.0
+    container_name: pg_conn_pool_db
+    ports:
+      - 15432:5432
+    volumes:
+      - db_store:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=p@ssw0rd
+  conn_pool:
+    image: bitnami/pgbouncer:latest
+    ports:
+      - 16432:6432
+    environment:
+      - POSTGRESQL_HOST=db
+      - POSTGRESQL_PORT=5432
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=p@ssw0rd
+      - POSTGRESQL_DATABASE=postgres
+      - PGBOUNCER_AUTH_TYPE=md5
+      - PGBOUNCER_POOL_MODE=transaction
+      - PGBOUNCER_MAX_CLIENT_CONN=100
+      - PGBOUNCER_DEFAULT_POOL_SIZE=20
+volumes:
+  db_store:
